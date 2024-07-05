@@ -6,29 +6,12 @@ const useLogout = () => {
 	const setUser = useSetRecoilState(userAtom);
 	const showToast = useShowToast();
 
-	const logout = async () => {
-		try {
-			const res = await fetch("/api/users/logout", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-			const data = await res.json();
-
-			if (data.error) {
-				showToast("Error", data.error, "error");
-				return;
-			}
-
-			localStorage.removeItem("user_id", data.data[0]._id);
-			setUser(null);
-		} catch (error) {
-			showToast("Error", error, "error");
-		}
-	};
-
-	return logout;
+	try {
+		localStorage.removeItem("user_id");
+		setUser(null);
+	} catch (error) {
+		showToast("Error", error, "error");
+	}
 };
 
 export default useLogout;

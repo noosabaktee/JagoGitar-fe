@@ -4,7 +4,6 @@ import userAtom from "../atoms/userAtom";
 import { RxAvatar } from "react-icons/rx";
 import { Link as RouterLink } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi";
-import useLogout from "../hooks/useLogout";
 import { BsFillChatQuoteFill } from "react-icons/bs";
 import Logo from "../assets/image/Logo.png";
 import { VscAccount } from "react-icons/vsc";
@@ -12,15 +11,23 @@ import { getUser } from "../libs/Methods";
 import { useEffect, useState } from "react";
 
 const Navbar = () => {
-    // const user = useRecoilValue(userAtom);
-    const logout = useLogout();
-    const setUser = useSetRecoilState(userAtom);
     let [users, setUsers] = useState()
 
-   getUser({ _id: localStorage.getItem("user_id") })
-   .then(data => {
-       setUsers(data.data[0])
-   })
+    const handleLogout = () => {    
+        try {
+            localStorage.removeItem("user_id");
+            location.reload();
+        } catch (error) {
+            showToast("Error", error, "error");
+        }
+    };
+
+    if(localStorage.getItem("user_id")){
+        getUser({ _id: localStorage.getItem("user_id") })
+        .then(data => {
+            setUsers(data.data[0])
+        })
+    }
 
 
     return (
@@ -67,9 +74,9 @@ const Navbar = () => {
                         <Link as={RouterLink} to={`/chat`}>
                             <BsFillChatQuoteFill size={20} />
                         </Link>
-                        {/* <Button size={"xs"} onClick={logout}>
+                        <Button size={"xs"} onClick={() => handleLogout()}>
                             <FiLogOut size={20} />
-							</Button> */}
+							</Button>
 							<Link as={RouterLink} to={`/user/${users.username}`} mx={4}>
                                 <RxAvatar size={24} />
                             </Link>
